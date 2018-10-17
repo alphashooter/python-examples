@@ -1,5 +1,5 @@
-def foo(x, y):
-    return x + y
+def foo(x, y, z=0):
+    return x + y + z
 
 
 def bar(x, y, z=1):
