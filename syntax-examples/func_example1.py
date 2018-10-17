@@ -1,4 +1,4 @@
-def foo(x, y, z=0):
+def foo(x, y, z=2):
     return x + y + z
 
 
