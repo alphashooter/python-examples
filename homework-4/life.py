@@ -106,7 +106,11 @@ class Cell(BasicCell):
         blue = 0
         color = '#%02x%02x%02x' % (red, green, blue)
 
-        graphics.draw_circle(graphics.Point(10 * self.x + 5, 10 * self.y + 5), 5, color)
+        graphics.draw_ellipse(
+            graphics.Point(10 * self.x, 10 * self.y),
+            graphics.Point(10 * self.x + 10, 10 * self.y + 10),
+            color
+        )
 
     def update(self) -> None:
         self.age += 1

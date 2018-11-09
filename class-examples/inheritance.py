@@ -4,11 +4,18 @@ class A(object):
 
 
 class B(A):
+    def __init__(self, x):
+        self.x = x
+
     def bar(self):
         print('B.bar()')
 
 
 class C(B):
+    def __init__(self, x, y):
+        B.__init__(self, x)
+        self.y = y
+
     def foo(self):
         print('C.foo()')
 
@@ -17,8 +24,8 @@ class C(B):
 
 
 a = A()
-b = B()
-c = C()
+b = B(1)
+c = C(2, 3)
 
 a.foo()
 b.foo()
