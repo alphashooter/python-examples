@@ -3,7 +3,7 @@ from typing import Optional, List
 from time import sleep
 from random import random
 
-from common import graphics
+import graphics
 
 
 class Field(object):
@@ -12,17 +12,18 @@ class Field(object):
         for y in range(height):
             self.cells.append([])
             for x in range(width):
-                cell = Cell(self, x, y, random() < 0.25)
+                if random() < 0.25:
+                    cell = Cell(self, x, y)
+                else:
+                    cell = DeadCell(self, x, y)
                 self.cells[y].append(cell)
         self.width = width
         self.height = height
 
     def draw(self) -> None:
-        graphics.clear()
         for row in self.cells:
             for cell in row:
                 cell.draw()
-        graphics.show()
 
     def update(self) -> None:
         for row in self.cells:
@@ -34,10 +35,10 @@ class Field(object):
                 if new:
                     self.cells[new.y][new.x] = new
 
-    def get_cell(self, x: int, y: int) -> 'Cell':
+    def get_cell(self, x: int, y: int) -> 'BasicCell':
         return self.cells[y % self.height][x % self.width]
 
-    def get_neighbours(self, cell: 'Cell') -> List['Cell']:
+    def get_neighbours(self, cell: 'BasicCell') -> List['BasicCell']:
         x, y = cell.x, cell.y
 
         result = []
@@ -54,9 +55,9 @@ class Field(object):
 class BasicCell(object):
     def __init__(self, field: Field, x: int, y: int, alive: bool):
         self.field = field
+        self.alive = alive
         self.x = x
         self.y = y
-        self.alive = alive
         self.__next = None
 
     def draw(self) -> None:
@@ -67,28 +68,45 @@ class BasicCell(object):
 
     def kill(self, next: Optional['BasicCell'] = None) -> None:
         if next is None:
-            next = Cell(self.field, self.x, self.y, False)
+            next = DeadCell(self.field, self.x, self.y)
         self.__next = next
 
     def next(self) -> Optional['BasicCell']:
         return self.__next
 
 
+class DeadCell(BasicCell):
+    def __init__(self, field: Field, x: int, y: int):
+        BasicCell.__init__(self, field, x, y, False)
+
+    def draw(self) -> None:
+        return
+
+    def update(self) -> None:
+        alive = 0
+
+        neighbours = self.field.get_neighbours(self)
+        for neighbour in neighbours:
+            if neighbour.alive:
+                alive += 1
+
+        if alive == 3:
+            next = Cell(self.field, self.x, self.y)
+            self.kill(next)
+
+
 class Cell(BasicCell):
-    def __init__(self, field: Field, x: int, y: int, alive: bool):
-        BasicCell.__init__(self, field, x, y, alive)
+    def __init__(self, field: Field, x: int, y: int):
+        BasicCell.__init__(self, field, x, y, True)
         self.age = 0
 
     def draw(self) -> None:
-        if not self.alive:
-            return
-
         red = 0
         green = max(0xFF - self.age, 0x80)
         blue = 0
         color = '#%02x%02x%02x' % (red, green, blue)
 
-        graphics.draw_circle(10 * self.x + 5, 10 * self.y + 5, 5, color)
+        graphics.draw_circle(graphics.Point(10 * self.x + 5, 10 * self.y + 5), 5, color)
 
     def update(self) -> None:
         self.age += 1
@@ -99,19 +117,17 @@ class Cell(BasicCell):
             if neighbour.alive:
                 alive += 1
 
-        if self.alive:
-            if alive < 2 or alive > 3:
-                self.kill()
-        else:
-            if alive == 3:
-                next = Cell(self.field, self.x, self.y, True)
-                self.kill(next)
+        if alive < 2 or alive > 3:
+            self.kill()
 
-
-graphics.window('Game of Life', 400, 300)
 
 field = Field(40, 30)
+
+graphics.configure('Game of Life', 400, 300)
 while True:
+    graphics.clear()  # clear screen
     field.draw()
+    graphics.show()  # update screen
+
     field.update()
     sleep(0.100)
