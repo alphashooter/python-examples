@@ -28,6 +28,7 @@ print('Found %d records: ' % len(persons))
 i = 1
 for name in persons:
     print('{}. {}, {age}, {profession}'.format(i, name, **persons[name]))
+    i += 1
 print()
 
 
