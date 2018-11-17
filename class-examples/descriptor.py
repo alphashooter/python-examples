@@ -38,9 +38,9 @@ class Bar(Foo):
 
 
 foo = Foo()
-foo.x = 123
-x = foo.x
-del foo.x
+foo.x = 123  # RevealAccess.__set__
+x = foo.x  # RevealAccess.__get__
+del foo.x  # RevealAccess.__delete__
 
 
 bar = Bar()
