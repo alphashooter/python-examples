@@ -14,7 +14,7 @@ def request(host: str) -> str:
     # write HTTP request into socket
     data = 'GET / HTTP/1.0\r\nHost: %s\r\n\r\n' % host
     connection.sendall(data.encode())
-    # flash all pending data and send EOF
+    # flush all pending data and send EOF
     connection.shutdown(SHUT_WR)
 
     result = b''

@@ -79,12 +79,12 @@
         {% if not name %} {# if-clause inside template #}
         <h2>Hello, <span id="name">%USERNAME%</span>!</h2>
 
-        {% elif name == 'edkjrtgdgcbfiu' %} {# elif clause #}
+        {% elif name == 'edkjrtgdgcbfiu' %} {# elif-clause #}
         {% for i in range(1) %} {# loop start #}
         <h2 id="name">Meow!</h2>
         {% end %} {# loop end #}
 
-        {% else %} {# else clause #}
+        {% else %} {# else-clause #}
         <h2>Hello, <span id="name">{{ name }}</span>!</h2> {# render expression #}
 
         {% end %} {# conditional end #}
