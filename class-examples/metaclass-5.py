@@ -440,7 +440,24 @@ def serialize(source):
 #
 
 
+# serialize aggregate
 x = 0
 y = C(1, 2.0, '3')
 source = D(x, y)
 result = serialize(source)
+
+# serialize string
+x = 'some text...'
+result = serialize(x)
+
+# todo: serialize bool
+# x = True
+# result = serialize(x)
+
+# todo: serialize bytes
+# x = b'some bytes...'
+# result = serialize(x)
+
+# todo: serialize list
+# x = [False, 1, 2.0, '3', b'4']
+# result = serialize(x)
