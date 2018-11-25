@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello, {{ name }}!</title>
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+        body {
+            min-height: 100%;
+            margin: 0;
+            text-align: center;
+        }
+        .root {
+            padding: 1px;
+        }
+    </style>
+    <script>
+        function hypot(x, y) {
+            return Math.sqrt(x * x + y * y);
+        }
+
+        function clamp(x, xmin, xmax) {
+            if (x < xmin)
+                return xmin;
+            if (x > xmax)
+                return xmax;
+            return x;
+        }
+
+        function on_hover(event) {
+            const w = 0.5 * window.innerWidth;
+            const h = 0.5 * window.innerHeight;
+            const x = event.pageX - w;
+            const y = event.pageY - h;
+
+            const hue = Math.round(180 * (1 + Math.atan2(y, x) / Math.PI));
+            const value = clamp(hypot(x / w, y / h), 0, 1);
+
+            const colors = [0, 0, 0];
+            const sector = hue / 60;
+            const ch1 = Math.round(255 * value);
+            const ch2 = Math.round((1 - Math.abs(sector % 2 - 1)) * ch1);
+
+            if (sector <= 1) {
+                colors[0] = ch1;
+                colors[1] = ch2;
+            }
+            else if (sector <= 2) {
+                colors[0] = ch2;
+                colors[1] = ch1;
+            }
+            else if (sector <= 3) {
+                colors[1] = ch1;
+                colors[2] = ch2;
+            }
+            else if (sector <= 4) {
+                colors[1] = ch2;
+                colors[2] = ch1;
+            }
+            else if (sector <= 5) {
+                colors[2] = ch1;
+                colors[0] = ch2;
+            }
+            else if (sector <= 6) {
+                colors[2] = ch2;
+                colors[0] = ch1;
+            }
+
+            const header = document.getElementById("name");
+            header.style.color = 'rgb(' + colors.join(", ") + ")";
+        }
+    </script>
+</head>
+<body onmousemove="on_hover(event)">
+    <div class="root">
+        <h1>Pom-pom-pom!</h1>
+        {% if not name %} {# if-clause inside template #}
+        <h2>Hello, <span id="name">%USERNAME%</span>!</h2>
+
+        {% elif name == 'edkjrtgdgcbfiu' %} {# elif clause #}
+        {% for i in range(1) %} {# loop start #}
+        <h2 id="name">Meow!</h2>
+        {% end %} {# loop end #}
+
+        {% else %} {# else clause #}
+        <h2>Hello, <span id="name">{{ name }}</span>!</h2> {# render expression #}
+
+        {% end %} {# conditional end #}
+    </div>
+</body>
+</html>
