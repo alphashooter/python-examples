@@ -19,6 +19,6 @@ from webapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/<name>', views.index),
-    re_path(r'^(?P<x>\d+)/plus/(?P<y>\d+)$', views.plus)
+    path('authors/get', views.get_authors),
+    re_path(r'^authors/add/(\w+) (\w+)$', views.add_author)
 ]
