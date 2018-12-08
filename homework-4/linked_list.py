@@ -32,13 +32,35 @@ class LinkedList(object):
             self.append(value)
             return
 
-        raise NotImplementedError()
+        target = self.__head
+        for i in range(index):
+            target = target.next
+
+        node = Node(value)
+        node.next = target.next
+        target.next = node
+
+        self.__length += 1
 
     def append(self, value: Any) -> None:
-        raise NotImplementedError()
+        node = self.__head
+        while node.next is not None:
+            node = node.next
+        node.next = Node(value)
+        self.__length += 1
 
     def erase(self, index: int) -> None:
-        raise NotImplementedError()
+        if index < 0:
+            index = self.__length + index
+
+        assert 0 <= index < self.__length, 'index is out of range'
+
+        target = self.__head
+        for i in range(index):
+            target = target.next
+
+        target.next = target.next.next
+        self.__length -= 1
 
     def __iter__(self):
         node = self.__head.next

@@ -45,7 +45,7 @@ if name in persons:
     person.profession = profession
 else:
     person = Person(name, age, profession)
-person.delete()
+person.commit()
 
 persons = load_persons()
 print(persons)

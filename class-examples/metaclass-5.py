@@ -78,6 +78,23 @@ class Serializer(object, metaclass=SerializerMeta):
         return serializer.load(io)
 
 
+class Boolean(Serializer, hint=bool):
+    @classmethod
+    def convert(cls, value: Any) -> Any:
+        assert isinstance(value, bool)
+        return value
+
+    @classmethod
+    def dump(cls, value: Any, io: BinaryIO) -> None:
+        data = pack('>?', value)
+        io.write(data)
+
+    @classmethod
+    def load(cls, io: BinaryIO) -> Any:
+        value, = unpack('>?', io.read(1))
+        return value
+
+
 class Integer(Serializer, hint=int):
     @classmethod
     def convert(cls, value: Any) -> int:
@@ -279,6 +296,44 @@ class String(Serializer, hint=str):
         return value
 
 
+class Bytes(Serializer, hint=bytes):
+    @classmethod
+    def convert(cls, value: Any) -> Any:
+        assert isinstance(value, (bytes, bytearray))
+        return value
+
+    @classmethod
+    def dump(cls, value: Any, io: BinaryIO) -> None:
+        size = len(value)
+        UnsignedInteger.dump(size, io)
+        io.write(value)
+
+    @classmethod
+    def load(cls, io: BinaryIO) -> Any:
+        size = UnsignedInteger.load(io)
+        value = io.read(size)
+        return value
+
+
+class Array(Serializer, hint=list):
+    @classmethod
+    def convert(cls, value: Any) -> Any:
+        return list(value)
+
+    @classmethod
+    def dump(cls, value: Any, io: BinaryIO) -> None:
+        size = len(value)
+        UnsignedInteger.dump(size, io)
+        for item in value:
+            Serializer.dump(item, io)
+
+    @classmethod
+    def load(cls, io: BinaryIO) -> Any:
+        size = UnsignedInteger.load(io)
+        value = [Serializer.load(io) for i in range(size)]
+        return value
+
+
 #
 
 
@@ -447,7 +502,7 @@ source = D(x, y)
 result = serialize(source)
 
 # serialize string
-x = 'some text...'
+x = [False, 1, 2.0, '3', b'4']
 result = serialize(x)
 
 # todo: serialize bool
