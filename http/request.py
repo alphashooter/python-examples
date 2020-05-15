@@ -9,7 +9,7 @@ s.send(req.encode())
 s.shutdown(SHUT_WR)
 data = b''
 while True:
-    chunk = s.recv(0x10000)
+    chunk = s.recv(0x20000)
     if not chunk:
         break
     data += chunk
