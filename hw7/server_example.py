@@ -1,4 +1,4 @@
-from hw6 import server
+from hw7 import server
 
 
 def handle_request(request: str) -> str:
